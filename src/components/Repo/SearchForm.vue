@@ -3,16 +3,18 @@ import type { RepoSearchSort, RepoSearchSortField, RepoSearchSortDir } from "@/s
 
 defineOptions({ name: "RepoSearchForm" });
 
-const props = withDefaults(
-  defineProps<{
-    q: string;
-    sort: RepoSearchSort | null;
-    loading: boolean;
-    disabled?: boolean;
-    disabledReasonId?: string;
-  }>(),
-  { disabled: false }
-);
+const {
+  q,
+  sort,
+  loading,
+  disabled = false,
+} = defineProps<{
+  q: string;
+  sort: RepoSearchSort | null;
+  loading: boolean;
+  disabled?: boolean;
+  disabledReasonId?: string;
+}>();
 
 const emit = defineEmits<{ submit: [payload: { q: string; sort: RepoSearchSort | null }] }>();
 
@@ -28,20 +30,20 @@ const dirItems: { label: string; value: RepoSearchSortDir }[] = [
   { label: "Ascending", value: "asc" },
 ];
 
-const draftQ = ref(props.q);
-const draftField = ref<RepoSearchSortField | "best-match">(props.sort ? props.sort.field : "best-match");
-const draftDir = ref<RepoSearchSortDir>(props.sort ? props.sort.dir : "desc");
+const draftQ = ref(q);
+const draftField = ref<RepoSearchSortField | "best-match">(sort ? sort.field : "best-match");
+const draftDir = ref<RepoSearchSortDir>(sort ? sort.dir : "desc");
 
 watch(
-  () => [props.q, props.sort] as const,
+  () => [q, sort] as const,
   () => {
-    draftQ.value = props.q;
+    draftQ.value = q;
 
-    if (props.sort === null) {
+    if (sort === null) {
       draftField.value = "best-match";
     } else {
-      draftField.value = props.sort.field;
-      draftDir.value = props.sort.dir;
+      draftField.value = sort.field;
+      draftDir.value = sort.dir;
     }
   }
 );

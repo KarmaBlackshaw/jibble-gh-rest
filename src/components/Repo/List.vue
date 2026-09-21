@@ -3,7 +3,7 @@ import type { GithubRepo } from "@/services/github/schemas";
 
 defineOptions({ name: "RepoList" });
 
-withDefaults(defineProps<{ repos: GithubRepo[]; loading: boolean; stale?: boolean }>(), { stale: false });
+const { repos, loading } = defineProps<{ repos: GithubRepo[]; loading: boolean; stale?: boolean }>();
 </script>
 
 <template>

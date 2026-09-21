@@ -3,3 +3,4 @@
 - **DRY** — no duplication; extract shared logic, reuse existing helpers/utils/types before writing new.
 - **KISS** — simplest thing that works; boring over clever.
 - **SOLID** — single responsibility, depend on abstractions, no god modules.
+- **Props** — always destructure `defineProps` (Vue 3.5 reactive destructure), never `withDefaults`. Defaults go in the destructure: `const { size = "medium" } = defineProps<{ size?: string }>()`.

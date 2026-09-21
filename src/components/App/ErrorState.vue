@@ -3,14 +3,11 @@ import type { GithubError } from "@/services/github/errors";
 
 defineOptions({ name: "AppErrorState" });
 
-const props = withDefaults(
-  defineProps<{
-    error: GithubError;
-    variant: "page" | "inline";
-    bannerVisible?: boolean;
-  }>(),
-  { bannerVisible: false }
-);
+const { error, bannerVisible = false } = defineProps<{
+  error: GithubError;
+  variant: "page" | "inline";
+  bannerVisible?: boolean;
+}>();
 
 const emit = defineEmits<{ retry: [] }>();
 
@@ -50,16 +47,16 @@ function describeError(error: GithubError): ErrorContent {
   }
 }
 
-const content = computed(() => describeError(props.error));
+const content = computed(() => describeError(error));
 
-const isInvalidQuery = computed(() => props.error.type === "invalid-query");
+const isInvalidQuery = computed(() => error.type === "invalid-query");
 
-const isLimit = computed(() => props.error.type === "rate-limited" || props.error.type === "secondary-rate-limited");
+const isLimit = computed(() => error.type === "rate-limited" || error.type === "secondary-rate-limited");
 
-const shouldRender = computed(() => !(props.bannerVisible && isLimit.value));
+const shouldRender = computed(() => !(bannerVisible && isLimit.value));
 
 const alertType = computed(() => {
-  const t = props.error.type;
+  const t = error.type;
 
   return t === "network" || t === "invalid-query" || isLimit.value ? "warning" : "error";
 });

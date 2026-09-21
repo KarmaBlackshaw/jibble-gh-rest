@@ -1,15 +1,17 @@
 <script setup lang="ts">
 defineOptions({ name: "AppAlert" });
 
-withDefaults(
-  defineProps<{
-    type: "info" | "success" | "warning" | "error";
-    title?: string;
-    showIcon?: boolean;
-    closable?: boolean;
-  }>(),
-  { showIcon: true, closable: false }
-);
+const {
+  type,
+  title,
+  showIcon = true,
+  closable = false,
+} = defineProps<{
+  type: "info" | "success" | "warning" | "error";
+  title?: string;
+  showIcon?: boolean;
+  closable?: boolean;
+}>();
 </script>
 
 <template>
