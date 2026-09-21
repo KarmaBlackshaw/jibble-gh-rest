@@ -97,9 +97,6 @@ export default [
       "**/components.d.ts",
       "**/typed-router.d.ts",
       "auto-import.json",
-      "postcss.config.js",
-      "tailwind.config.js",
-      "src/stores/index.ts",
     ],
   },
   js.configs.recommended,
@@ -131,5 +128,9 @@ export default [
     plugins: { "@typescript-eslint": tsPlugin, "unused-imports": unusedImports },
     settings,
     rules,
+  },
+  {
+    files: ["**/*.vue", "**/*.{ts,tsx,mts,cts}"],
+    rules: { "no-undef": "off" },
   },
 ];

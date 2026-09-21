@@ -27,13 +27,4 @@ dist-ssr
 
 .env
 
-# Auto-generated type declarations
-auto-import.json
-auto-imports.d.ts
-components.d.ts
-typed-router.d.ts
-src/components/index.ts
-src/composables/index.ts
-src/types/index.ts
-src/stores/index.ts
-src/utils/index.ts
+docs/
