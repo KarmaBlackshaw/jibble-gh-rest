@@ -75,8 +75,8 @@ const alertType = computed(() => {
         </a>
       </template>
       <template v-if="content.action !== 'none'" #extra>
-        <el-button v-if="content.action === 'retry'" type="primary" @click="emit('retry')">Retry</el-button>
-        <el-button v-else tag="router-link" to="/">New search</el-button>
+        <AppButton v-if="content.action === 'retry'" type="primary" @click="emit('retry')">Retry</AppButton>
+        <AppButton v-else tag="router-link" to="/">New search</AppButton>
       </template>
     </el-result>
 
@@ -87,8 +87,8 @@ const alertType = computed(() => {
           GitHub search syntax<span class="visually-hidden"> (opens in new tab)</span>
         </a>
         <div v-if="content.action !== 'none'" class="inline-action">
-          <el-button v-if="content.action === 'retry'" type="primary" size="small" @click="emit('retry')">Retry</el-button>
-          <el-button v-else tag="router-link" to="/" size="small">New search</el-button>
+          <AppButton v-if="content.action === 'retry'" type="primary" size="small" @click="emit('retry')">Retry</AppButton>
+          <AppButton v-else tag="router-link" to="/" size="small">New search</AppButton>
         </div>
       </div>
     </AppAlert>

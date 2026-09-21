@@ -35,9 +35,7 @@ const description = computed(() => props.repo.description?.trim() || null);
       {{ description ?? "No description provided." }}
     </p>
 
-    <el-button tag="a" :href="repo.html_url" target="_blank" rel="noopener noreferrer" class="repo-header__github">
-      View on GitHub<span class="visually-hidden">(opens in new tab)</span>
-    </el-button>
+    <AppButton external :href="repo.html_url" class="repo-header__github">View on GitHub</AppButton>
   </div>
 </template>
 

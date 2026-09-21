@@ -9,7 +9,7 @@ useTitle("Page not found · GitHub Repo Explorer");
     <h1 tabindex="-1">Page not found</h1>
     <el-result icon="info" sub-title="That address doesn't match anything here.">
       <template #extra>
-        <el-button tag="router-link" to="/">New search</el-button>
+        <AppButton tag="router-link" to="/">New search</AppButton>
       </template>
     </el-result>
   </main>
