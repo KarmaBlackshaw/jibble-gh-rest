@@ -1,5 +1,5 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.json",
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
     "env.d.ts",
     "components.d.ts",
@@ -7,10 +7,13 @@
     "typed-router.d.ts",
     "node_modules/unplugin-vue-router/client.d.ts",
     "src/**/*",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "fixtures/**/*.json"
   ],
-  "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
     "moduleResolution": "Bundler",
     "verbatimModuleSyntax": false,
     "paths": {

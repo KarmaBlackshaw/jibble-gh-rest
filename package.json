@@ -8,8 +8,12 @@
     "build": "npm run build-only && npm run type-check",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
-    "lint": "eslint . --max-warnings=0 --fix"
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --max-warnings=0 --fix"
+  },
+  "engines": {
+    "node": ">=22"
   },
   "dependencies": {
     "@vueuse/core": "^15.0.0",
