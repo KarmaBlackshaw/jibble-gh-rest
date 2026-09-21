@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 import Vue from "@vitejs/plugin-vue";
 import VueRouter from "unplugin-vue-router/vite";
@@ -39,6 +39,16 @@ export default defineConfig({
     }),
     svgLoader(),
   ],
+  test: {
+    environment: "happy-dom",
+    globals: false,
+    include: ["src/**/*.spec.ts"],
+    server: {
+      deps: {
+        inline: ["element-plus"],
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
