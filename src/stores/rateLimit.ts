@@ -101,11 +101,8 @@ export const useRateLimitStore = defineStore("rateLimit", () => {
     return false;
   }
 
-  const isSearchBlocked = computed(() => bucketBlocked("search"));
-  const isCoreBlocked = computed(() => bucketBlocked("core"));
-
   function isBlocked(bucket: RateLimitBucket): boolean {
-    return bucket === "search" ? isSearchBlocked.value : isCoreBlocked.value;
+    return bucketBlocked(bucket);
   }
 
   function ownBlockEnd(bucket: RateLimitBucket): number | null {
@@ -178,8 +175,6 @@ export const useRateLimitStore = defineStore("rateLimit", () => {
     fallbackBlockedUntil,
     recordHeaders,
     recordRetryAfter,
-    isSearchBlocked,
-    isCoreBlocked,
     isBlocked,
     blockedUntil,
     blockKind,

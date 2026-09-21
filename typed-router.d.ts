@@ -30,6 +30,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/[...path]': RouteRecordInfo<
+      '/[...path]',
+      '/:path(.*)',
+      { path: ParamValue<true> },
+      { path: ParamValue<false> },
+      | never
+    >,
+    '/repos/[owner]/[name]': RouteRecordInfo<
+      '/repos/[owner]/[name]',
+      '/repos/:owner/:name',
+      { owner: ParamValue<true>, name: ParamValue<true> },
+      { owner: ParamValue<false>, name: ParamValue<false> },
+      | never
+    >,
   }
 
   /**
@@ -46,6 +60,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/index.vue': {
       routes:
         | '/'
+      views:
+        | never
+    }
+    'src/pages/[...path].vue': {
+      routes:
+        | '/[...path]'
+      views:
+        | never
+    }
+    'src/pages/repos/[owner]/[name].vue': {
+      routes:
+        | '/repos/[owner]/[name]'
       views:
         | never
     }

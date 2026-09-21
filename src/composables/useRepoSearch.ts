@@ -17,7 +17,7 @@ export function useRepoSearch(params: { q: Readonly<Ref<string>>; sort: Readonly
   const query = useQuery<GithubRepoSearchResponse, GithubError>({
     queryKey: ["search", params.q, sortField, sortDir, params.page],
     queryFn: ({ signal }) => searchRepositories({ q: params.q.value.trim(), sort: params.sort.value, page: params.page.value }, signal),
-    enabled: () => params.q.value.trim().length > 0 && !rateLimit.isSearchBlocked,
+    enabled: () => params.q.value.trim().length > 0 && !rateLimit.isBlocked("search"),
   });
 
   const searchKey = computed(() => JSON.stringify([params.q.value.trim(), sortField.value, sortDir.value]));
