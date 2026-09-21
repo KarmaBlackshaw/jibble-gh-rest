@@ -12,7 +12,8 @@
     "lint": "eslint . --max-warnings=0 --fix"
   },
   "dependencies": {
-    "@vueuse/core": "^12.0.0",
+    "@vueuse/core": "^15.0.0",
+    "element-plus": "^2.14.6",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"

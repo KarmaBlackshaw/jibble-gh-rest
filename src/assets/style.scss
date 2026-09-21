@@ -5,6 +5,7 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   --text: #1f2328;
   --text-muted: #59636e;
+  --brand: #0969da;
 }
 
 *,
@@ -27,4 +28,35 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
+// !important is the only way to kill el-skeleton's shimmer and Element Plus's transitions from this entry stylesheet, which loads before the resolver injects those styles
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  input,
+  select,
+  textarea,
+  .el-input__inner,
+  .el-select__wrapper {
+    font-size: 16px !important; // iOS zooms a focused field under 16px; must beat Element Plus's own larger-specificity size rules
+  }
 }

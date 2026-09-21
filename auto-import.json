@@ -312,6 +312,14 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "createDisposableDirective": true,
+    "refManualReset": true,
+    "useCssSupports": true,
+    "useElementOverflow": true,
+    "useLiveAnnouncer": true,
+    "useTemporalNow": true,
+    "useTimeAgoIntl": true,
+    "useWebMCP": true
   }
 }

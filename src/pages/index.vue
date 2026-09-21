@@ -6,6 +6,10 @@ defineOptions({ name: "HomePage" });
   <main class="home">
     <h1 class="title">jibble-gh-rest</h1>
     <p class="subtitle">Vue 3 + Vite + Pinia</p>
+    <el-button type="primary">Theme check</el-button>
+    <el-alert type="warning" title="Theme check" :closable="false" />
+    <el-input aria-label="Input check" />
+    <el-select aria-label="Select check" />
   </main>
 </template>
 
