@@ -34,7 +34,7 @@ const updatedAgo = useTimeAgo(() => props.repo.updated_at);
   <article class="repo-card">
     <div class="repo-card__head">
       <el-avatar shape="square" :size="40" :src="avatarUrl" alt="">
-        <span aria-hidden="true">{{ initial }}</span>
+        <span>{{ initial }}</span>
       </el-avatar>
       <h3 class="repo-card__name">
         <RouterLink :to="to">{{ repo.full_name }}</RouterLink>

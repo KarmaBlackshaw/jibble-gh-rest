@@ -80,7 +80,7 @@ const alertType = computed(() => {
       </template>
     </el-result>
 
-    <el-alert v-else role="none" :type="alertType" :title="content.title" show-icon :closable="false">
+    <AppAlert v-else :type="alertType" :title="content.title">
       <div class="inline-body">
         <p v-if="content.detail" class="inline-detail">{{ content.detail }}</p>
         <a v-if="isInvalidQuery" class="syntax-link" :href="SYNTAX_URL" target="_blank" rel="noopener noreferrer">
@@ -91,7 +91,7 @@ const alertType = computed(() => {
           <el-button v-else tag="router-link" to="/" size="small">New search</el-button>
         </div>
       </div>
-    </el-alert>
+    </AppAlert>
   </div>
 </template>
 

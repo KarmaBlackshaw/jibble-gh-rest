@@ -24,7 +24,7 @@ function onCurrentChange(page: number) {
 </script>
 
 <template>
-  <nav v-if="totalCount > 0" class="repo-pagination" aria-label="Search results pages">
+  <nav v-if="totalCount > 0" class="repo-pagination">
     <el-pagination
       background
       layout="prev, pager, next"

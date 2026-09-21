@@ -16,6 +16,18 @@ const props = withDefaults(
 
 const emit = defineEmits<{ submit: [payload: { q: string; sort: RepoSearchSort | null }] }>();
 
+const fieldItems: { label: string; value: RepoSearchSortField | "best-match" }[] = [
+  { label: "Best match", value: "best-match" },
+  { label: "Stars", value: "stars" },
+  { label: "Forks", value: "forks" },
+  { label: "Recently updated", value: "updated" },
+];
+
+const dirItems: { label: string; value: RepoSearchSortDir }[] = [
+  { label: "Descending", value: "desc" },
+  { label: "Ascending", value: "asc" },
+];
+
 const draftQ = ref(props.q);
 const draftField = ref<RepoSearchSortField | "best-match">(props.sort ? props.sort.field : "best-match");
 const draftDir = ref<RepoSearchSortDir>(props.sort ? props.sort.dir : "desc");
@@ -45,41 +57,19 @@ function onSubmit() {
   <el-form class="search-form" label-position="top" @submit.prevent="onSubmit">
     <div class="form-grid">
       <el-form-item label="Search repositories" class="field-query">
-        <el-input v-model="draftQ" size="large" maxlength="256" clearable placeholder="e.g. language:rust stars:>5000" />
+        <AppInput v-model="draftQ" size="large" maxlength="256" clearable placeholder="e.g. language:rust stars:>5000" />
       </el-form-item>
 
-      <el-form-item label="Sort by">
-        <el-select v-model="draftField" size="large">
-          <el-option label="Best match" value="best-match" />
-          <el-option label="Stars" value="stars" />
-          <el-option label="Forks" value="forks" />
-          <el-option label="Recently updated" value="updated" />
-        </el-select>
+      <el-form-item label="Sort by" class="field-sort">
+        <AppSelect v-model="draftField" :items="fieldItems" size="large" />
       </el-form-item>
 
-      <el-form-item v-if="draftField !== 'best-match'" label="Order">
-        <el-switch
-          v-model="draftDir"
-          size="large"
-          active-value="asc"
-          inactive-value="desc"
-          active-text="Ascending"
-          inactive-text="Descending"
-          aria-label="Order"
-        />
+      <el-form-item v-if="draftField !== 'best-match'" label="Order" class="field-order">
+        <AppSelect v-model="draftDir" :items="dirItems" size="large" />
       </el-form-item>
 
       <el-form-item label=" " class="field-submit">
-        <el-button
-          type="primary"
-          native-type="submit"
-          size="large"
-          :loading="loading"
-          :disabled="disabled || loading || !draftQ.trim()"
-          :aria-describedby="disabledReasonId"
-        >
-          Search
-        </el-button>
+        <AppButton type="primary" native-type="submit" size="large" :loading="loading" :disabled="disabled || loading || !draftQ.trim()"> Search </AppButton>
       </el-form-item>
     </div>
   </el-form>
@@ -99,6 +89,15 @@ function onSubmit() {
   .form-grid {
     grid-template-columns: 1fr auto auto auto;
     align-items: end;
+  }
+
+  // el-select renders its single value in an absolutely-positioned node, so in an auto grid track it collapses to the caret; a definite width fits the longest option
+  .field-sort {
+    width: 200px;
+  }
+
+  .field-order {
+    width: 160px;
   }
 
   .field-submit :deep(.el-button) {

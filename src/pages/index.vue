@@ -122,7 +122,7 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
   <main class="search-page">
     <h1 tabindex="-1">GitHub Repo Explorer</h1>
 
-    <section class="search-page__search" aria-label="Search">
+    <section class="search-page__search">
       <RepoSearchForm :q="params.q.value" :sort="params.sort.value" :loading="search.isFetching.value" @submit="onSubmit" />
     </section>
 
@@ -130,12 +130,9 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
       <h2 :id="resultsId" ref="resultsHeading" tabindex="-1">{{ statusHeading }}</h2>
 
       <AppErrorState v-if="view.kind === 'results' && view.inlineError" :error="view.inlineError" variant="inline" :banner-visible="false" @retry="retry" />
-      <el-alert
+      <AppAlert
         v-else-if="view.kind === 'results' && search.incompleteResults.value"
         type="info"
-        role="none"
-        show-icon
-        :closable="false"
         title="GitHub timed out before finishing this search, so some matches may be missing. A narrower query usually fixes it."
       />
 
@@ -155,13 +152,13 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
         @update:current-page="onPageChange"
       />
 
-      <ul v-if="view.kind === 'idle'" class="search-page__examples" role="list">
+      <ul v-if="view.kind === 'idle'" class="search-page__examples">
         <li v-for="example in exampleQueries" :key="example">
           <RouterLink :to="{ path: '/', query: { q: example } }">{{ example }}</RouterLink>
         </li>
       </ul>
 
-      <div class="visually-hidden" role="status" aria-live="polite" aria-atomic="true">{{ announcement }}</div>
+      <div class="visually-hidden">{{ announcement }}</div>
     </section>
   </main>
 </template>

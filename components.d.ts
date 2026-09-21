@@ -8,8 +8,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AppAlert: typeof import('./src/components/App/Alert.vue')['default']
+    AppButton: typeof import('./src/components/App/Button.vue')['default']
     AppEmptyState: typeof import('./src/components/App/EmptyState.vue')['default']
     AppErrorState: typeof import('./src/components/App/ErrorState.vue')['default']
+    AppInput: typeof import('./src/components/App/Input.vue')['default']
+    AppSelect: typeof import('./src/components/App/Select.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']

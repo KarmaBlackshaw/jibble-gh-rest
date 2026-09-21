@@ -7,7 +7,7 @@ withDefaults(defineProps<{ repos: GithubRepo[]; loading: boolean; stale?: boolea
 </script>
 
 <template>
-  <div v-if="loading" class="repo-list__skeleton" aria-busy="true">
+  <div v-if="loading" class="repo-list__skeleton">
     <el-skeleton :count="5" animated>
       <template #template>
         <div class="repo-list__row">
@@ -22,7 +22,7 @@ withDefaults(defineProps<{ repos: GithubRepo[]; loading: boolean; stale?: boolea
     </el-skeleton>
   </div>
 
-  <ul v-else-if="repos.length > 0" class="repo-list" role="list" :aria-busy="stale">
+  <ul v-else-if="repos.length > 0" class="repo-list">
     <li v-for="repo in repos" :key="repo.id">
       <RepoCard :repo="repo" />
     </li>
