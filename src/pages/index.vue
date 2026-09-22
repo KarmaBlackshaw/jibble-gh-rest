@@ -17,9 +17,7 @@ const rateLimit = useRateLimitStore();
 const resultsId = "search-results";
 const exampleQueries = ["vue", "language:rust stars:>5000", "topic:accessibility"];
 
-const resultsHeading = ref<HTMLElement | null>(null);
 const announcement = ref("");
-const focusPending = ref(false);
 
 const isSearchBlocked = computed(() => rateLimit.isBlocked("search"));
 const limitError = computed(() => search.error.value?.type === "rate-limited" || search.error.value?.type === "secondary-rate-limited");
@@ -91,9 +89,7 @@ watch(search.totalCount, (n) => {
 });
 
 watch(statusHeading, (text) => {
-  if (!focusPending.value) {
-    announcement.value = text;
-  }
+  announcement.value = text;
 });
 
 function retry() {
@@ -102,28 +98,16 @@ function retry() {
   }
 }
 
-async function focusResultsWhenSettled() {
-  focusPending.value = true;
-
-  await until(search.isFetching).toBe(false);
-
-  resultsHeading.value?.focus();
-  focusPending.value = false;
-}
-
 async function onSubmit(payload: { q: string; sort: RepoSearchSort | null }) {
   const navigated = await params.submit(payload);
 
   if (!navigated) {
     retry();
   }
-
-  await focusResultsWhenSettled();
 }
 
-async function onPageChange(page: number) {
-  await params.goToPage(page);
-  await focusResultsWhenSettled();
+function onPageChange(page: number) {
+  params.goToPage(page);
 }
 
 useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Explorer` : "GitHub Repo Explorer")));
@@ -142,7 +126,7 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
     <RateLimitBanner bucket="search" />
 
     <section class="search-page__results" data-region="results">
-      <h2 :id="resultsId" ref="resultsHeading" tabindex="-1">{{ statusHeading }}</h2>
+      <h2 :id="resultsId" tabindex="-1">{{ statusHeading }}</h2>
 
       <AppErrorState
         v-if="view.kind === 'results' && view.inlineError"

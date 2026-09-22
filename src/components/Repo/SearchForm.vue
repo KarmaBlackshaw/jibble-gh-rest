@@ -29,6 +29,8 @@ const dirItems: { label: string; value: RepoSearchSortDir }[] = [
   { label: "Ascending", value: "asc" },
 ];
 
+const queryInput = ref<{ focus: () => void }>();
+
 const draftQ = ref(q);
 const draftField = ref<RepoSearchSortField | "best-match">(sort ? sort.field : "best-match");
 const draftDir = ref<RepoSearchSortDir>(sort ? sort.dir : "desc");
@@ -58,6 +60,8 @@ function onSubmit() {
     q: draftQ.value,
     sort,
   });
+
+  queryInput.value?.focus();
 }
 </script>
 
@@ -65,15 +69,15 @@ function onSubmit() {
   <el-form class="search-form" label-position="top" @submit.prevent="onSubmit">
     <div class="form-grid">
       <el-form-item label="Search repositories" class="field-query">
-        <AppInput v-model="draftQ" size="large" maxlength="256" clearable placeholder="e.g. language:rust stars:>5000" />
+        <AppInput ref="queryInput" v-model="draftQ" size="large" maxlength="256" clearable placeholder="e.g. language:rust stars:>5000" />
       </el-form-item>
 
       <el-form-item label="Sort by" class="field-sort">
-        <AppSelect v-model="draftField" :items="fieldItems" size="large" />
+        <AppSelect v-model="draftField" :items="fieldItems" size="large" @change="onSubmit" />
       </el-form-item>
 
       <el-form-item v-if="draftField !== 'best-match'" label="Order" class="field-order">
-        <AppSelect v-model="draftDir" :items="dirItems" size="large" />
+        <AppSelect v-model="draftDir" :items="dirItems" size="large" @change="onSubmit" />
       </el-form-item>
 
       <el-form-item label=" " class="field-submit">
