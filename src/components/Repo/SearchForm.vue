@@ -51,8 +51,17 @@ watch(
 function onSubmit() {
   const sort = draftField.value === "best-match" ? null : { field: draftField.value, dir: draftDir.value };
 
-  emit("submit", { q: draftQ.value, sort });
+  emit("submit", {
+    q: draftQ.value,
+    sort,
+  });
 }
+
+watch([draftField, draftDir], () => {
+  if (draftQ.value.trim()) {
+    onSubmit();
+  }
+});
 </script>
 
 <template>
