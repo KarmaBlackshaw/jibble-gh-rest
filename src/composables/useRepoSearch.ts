@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/vue-query";
 import type { Ref } from "vue";
 
-import { searchRepositories, type RepoSearchSort } from "@/services/github/client";
-import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo, GithubRepoSearchResponse } from "@/services/github/types";
+import { searchRepositories } from "@/services/github/client";
+import type { GithubError, GithubRepo, GithubRepoSearchResponse, RepoSearchSort } from "@/types/github";
 import { useRateLimitStore } from "@/stores/rateLimit";
 
 type LastGood = { searchKey: string; page: number; rows: GithubRepo[]; totalCount: number; incompleteResults: boolean };

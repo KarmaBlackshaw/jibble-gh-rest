@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RepoSearchSort, RepoSearchSortField, RepoSearchSortDir } from "@/services/github/client";
+import type { RepoSearchSort, RepoSearchSortField, RepoSearchSortDir } from "@/types/github";
 
 defineOptions({ name: "RepoSearchForm" });
 

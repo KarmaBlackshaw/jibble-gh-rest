@@ -1,22 +1,6 @@
 import { request, type QueryParams } from "@/utils/axios";
-import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo, GithubRepoSearchResponse } from "@/services/github/types";
-
-export const REPO_SEARCH_SORT_FIELDS = ["stars", "forks", "updated"] as const;
-export const REPO_SEARCH_SORT_DIRS = ["asc", "desc"] as const;
-
-export type RepoSearchSortField = (typeof REPO_SEARCH_SORT_FIELDS)[number];
-export type RepoSearchSortDir = (typeof REPO_SEARCH_SORT_DIRS)[number];
-export type RepoSearchSort = { field: RepoSearchSortField; dir: RepoSearchSortDir };
-
-export const SEARCH_PER_PAGE = 30;
-export const SEARCH_RESULT_CAP = 1000;
-
-interface SearchRepositoriesParams {
-  q: string;
-  sort: RepoSearchSort | null;
-  page: number;
-}
+import { SEARCH_PER_PAGE } from "@/types/github";
+import type { GithubError, GithubRepo, GithubRepoSearchResponse, SearchRepositoriesParams } from "@/types/github";
 
 const SEGMENT_PATTERN = /^[\w.-]+$/;
 

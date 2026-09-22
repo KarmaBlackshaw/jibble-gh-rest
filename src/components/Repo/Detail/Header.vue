@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GithubRepo } from "@/services/github/types";
+import type { GithubRepo } from "@/types/github";
 
 defineOptions({ name: "RepoDetailHeader" });
 

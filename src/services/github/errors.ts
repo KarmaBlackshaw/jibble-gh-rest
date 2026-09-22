@@ -1,16 +1,5 @@
 import type { RateLimitBucket } from "@/stores/rateLimit";
-import type { GithubErrorBody } from "@/services/github/types";
-
-export type GithubError =
-  | { type: "network" }
-  | { type: "aborted" }
-  | { type: "invalid-query"; message: string }
-  | { type: "not-found" }
-  | { type: "forbidden" }
-  | { type: "rate-limited"; bucket: RateLimitBucket; resetAt: number }
-  | { type: "secondary-rate-limited"; retryAfterSeconds: number }
-  | { type: "server"; status: number }
-  | { type: "unknown"; status: number };
+import type { GithubError, GithubErrorBody } from "@/types/github";
 
 const INVALID_QUERY_FALLBACK = "GitHub could not process that search.";
 const SECONDARY_LIMIT_PATTERN = /rate limit|secondary|abuse/i;

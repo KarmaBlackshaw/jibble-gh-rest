@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GithubError } from "@/services/github/errors";
+import type { GithubError } from "@/types/github";
 
 defineOptions({ name: "AppErrorState" });
 

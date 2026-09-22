@@ -1,7 +1,8 @@
 import axios, { CanceledError, type AxiosResponse } from "axios";
 
 import { useRateLimitStore, type RateLimitBucket } from "@/stores/rateLimit";
-import { mapResponseToError, type GithubError } from "@/services/github/errors";
+import { mapResponseToError } from "@/services/github/errors";
+import type { GithubError } from "@/types/github";
 
 declare module "axios" {
   interface AxiosRequestConfig {

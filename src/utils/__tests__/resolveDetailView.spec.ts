@@ -1,8 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { resolveDetailView } from "@/utils/resolveDetailView";
 import type { DetailView } from "@/utils/resolveDetailView";
-import type { GithubRepo } from "@/services/github/types";
-import type { GithubError } from "@/services/github/errors";
+import type { GithubRepo, GithubError } from "@/types/github";
 
 const repoFixture: GithubRepo = {
   id: 1,

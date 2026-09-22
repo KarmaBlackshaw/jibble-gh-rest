@@ -1,5 +1,4 @@
-import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo } from "@/services/github/types";
+import type { GithubError, GithubRepo } from "@/types/github";
 
 export type DetailView = { kind: "ready"; repo: GithubRepo } | { kind: "blocked" } | { kind: "error"; error: GithubError } | { kind: "loading" };
 

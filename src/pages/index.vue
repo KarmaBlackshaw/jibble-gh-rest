@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useSearchParams } from "@/composables/useSearchParams";
-import type { RepoSearchSort } from "@/services/github/client";
+import type { RepoSearchSort } from "@/types/github";
 import { useRepoSearch } from "@/composables/useRepoSearch";
 import { useRateLimitStore } from "@/stores/rateLimit";
 import { resolveSearchView } from "@/utils/resolveSearchView";
 import { formatExactCount } from "@/utils/formatCount";
 import { pluralize } from "@/utils/pluralize";
-import { SEARCH_PER_PAGE, SEARCH_RESULT_CAP } from "@/services/github/client";
+import { SEARCH_PER_PAGE, SEARCH_RESULT_CAP } from "@/types/github";
 
 defineOptions({ name: "HomePage" });
 

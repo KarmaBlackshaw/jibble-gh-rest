@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SEARCH_PER_PAGE, SEARCH_RESULT_CAP } from "@/services/github/client";
+import { SEARCH_PER_PAGE, SEARCH_RESULT_CAP } from "@/types/github";
 import { formatExactCount } from "@/utils/formatCount";
 
 defineOptions({ name: "RepoPagination" });

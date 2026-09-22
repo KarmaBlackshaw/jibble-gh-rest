@@ -1,12 +1,5 @@
-import {
-  REPO_SEARCH_SORT_FIELDS,
-  REPO_SEARCH_SORT_DIRS,
-  SEARCH_PER_PAGE,
-  SEARCH_RESULT_CAP,
-  type RepoSearchSort,
-  type RepoSearchSortField,
-  type RepoSearchSortDir,
-} from "@/services/github/client";
+import { REPO_SEARCH_SORT_FIELDS, REPO_SEARCH_SORT_DIRS, SEARCH_PER_PAGE, SEARCH_RESULT_CAP } from "@/types/github";
+import type { RepoSearchSort, RepoSearchSortField, RepoSearchSortDir } from "@/types/github";
 
 const MAX_PAGE = Math.ceil(SEARCH_RESULT_CAP / SEARCH_PER_PAGE);
 
