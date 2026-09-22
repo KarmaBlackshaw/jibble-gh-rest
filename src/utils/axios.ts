@@ -1,7 +1,13 @@
-import axios, { CanceledError } from "axios";
+import axios, { CanceledError, type AxiosResponse } from "axios";
 
 import { useRateLimitStore, type RateLimitBucket } from "@/stores/rateLimit";
 import { mapResponseToError, type GithubError } from "@/services/github/errors";
+
+declare module "axios" {
+  interface AxiosRequestConfig {
+    bucket?: RateLimitBucket;
+  }
+}
 
 const http = axios.create({
   baseURL: "https://api.github.com",
@@ -15,54 +21,55 @@ const http = axios.create({
 
 export type QueryParams = Record<string, string | number>;
 
-function bucketFrom(resource: string | null, fallback: RateLimitBucket): RateLimitBucket {
-  if (resource === "search" || resource === "core") {
-    return resource;
-  }
-
-  return fallback;
-}
-
-export async function request<T>(url: string, endpointBucket: RateLimitBucket, signal?: AbortSignal, params?: QueryParams): Promise<T> {
-  const rateLimit = useRateLimitStore();
-
-  let status: number;
-  let body: T;
+function toHeaders(raw: AxiosResponse["headers"]): Headers {
   const headers = new Headers();
 
-  try {
-    const res = await http.get(url, { signal, params });
+  Object.entries(raw).forEach(([key, value]) => {
+    if (typeof value === "string") {
+      headers.set(key, value);
+    }
+  });
 
-    status = res.status;
-    body = res.data;
+  return headers;
+}
 
-    Object.entries(res.headers).forEach(([key, value]) => {
-      if (typeof value === "string") {
-        headers.set(key, value);
-      }
-    });
-  } catch (error) {
-    if (signal?.aborted || error instanceof CanceledError) {
-      throw { type: "aborted" } satisfies GithubError;
+function bucketFrom(resource: string | null, fallback: RateLimitBucket): RateLimitBucket {
+  return resource === "search" || resource === "core" ? resource : fallback;
+}
+
+http.interceptors.response.use(
+  (res) => {
+    const rateLimit = useRateLimitStore();
+    const headers = toHeaders(res.headers);
+    const response = new Response(null, { status: res.status, headers });
+    // ponytail: "core" only guards a direct http.* call that skips request(); every call today passes bucket
+    const bucket = bucketFrom(headers.get("x-ratelimit-resource"), res.config.bucket ?? "core");
+
+    rateLimit.recordHeaders(bucket, headers, response.ok);
+
+    if (response.ok) {
+      return res;
     }
 
-    throw { type: "network" } satisfies GithubError;
-  }
-
-  const response = new Response(null, { status, headers });
-  const bucket = bucketFrom(headers.get("x-ratelimit-resource"), endpointBucket);
-
-  rateLimit.recordHeaders(bucket, headers, response.ok);
-
-  if (!response.ok) {
-    const error = mapResponseToError(response, bucket, body);
+    const error = mapResponseToError(response, bucket, res.data);
 
     if (error.type === "secondary-rate-limited") {
       rateLimit.recordRetryAfter(error.retryAfterSeconds);
     }
 
     throw error;
-  }
+  },
+  (error: unknown) => {
+    if (error instanceof CanceledError) {
+      throw { type: "aborted" } satisfies GithubError;
+    }
 
-  return body;
+    throw { type: "network" } satisfies GithubError;
+  }
+);
+
+export async function request<T>(url: string, bucket: RateLimitBucket, signal?: AbortSignal, params?: QueryParams): Promise<T> {
+  const res = await http.get<T>(url, { signal, params, bucket });
+
+  return res.data;
 }
