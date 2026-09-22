@@ -18,7 +18,7 @@ export function useRepo(params: { owner: Ref<string>; name: Ref<string> }): {
   const rateLimit = useRateLimitStore();
   const queryClient = useQueryClient();
 
-  const query = useQuery<GithubRepo, GithubError>({
+  const { data, error, isPending, isFetching, refetch } = useQuery<GithubRepo, GithubError>({
     queryKey: ["repo", owner, name],
     queryFn: async ({ signal }) => {
       const repo = await getRepo(owner.value, name.value, signal);
@@ -33,7 +33,7 @@ export function useRepo(params: { owner: Ref<string>; name: Ref<string> }): {
   });
 
   const canonicalPath = computed(() => {
-    const repo = query.data.value;
+    const repo = data.value;
 
     if (!repo) {
       return null;
@@ -49,15 +49,11 @@ export function useRepo(params: { owner: Ref<string>; name: Ref<string> }): {
     return `/repos/${encodeURIComponent(repo.owner.login)}/${encodeURIComponent(repo.name)}`;
   });
 
-  function refetch() {
-    query.refetch();
-  }
-
   return {
-    data: query.data,
-    error: query.error,
-    isPending: query.isPending,
-    isFetching: query.isFetching,
+    data,
+    error,
+    isPending,
+    isFetching,
     canonicalPath,
     refetch,
   };

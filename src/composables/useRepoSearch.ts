@@ -14,7 +14,7 @@ export function useRepoSearch(params: { q: Readonly<Ref<string>>; sort: Readonly
   const sortField = computed(() => params.sort.value?.field ?? null);
   const sortDir = computed(() => params.sort.value?.dir ?? null);
 
-  const query = useQuery<GithubRepoSearchResponse, GithubError>({
+  const { data, error, isPending, isFetching, refetch } = useQuery<GithubRepoSearchResponse, GithubError>({
     queryKey: ["search", params.q, sortField, sortDir, params.page],
     queryFn: ({ signal }) => searchRepositories({ q: params.q.value.trim(), sort: params.sort.value, page: params.page.value }, signal),
     enabled: () => params.q.value.trim().length > 0 && !rateLimit.isBlocked("search"),
@@ -23,7 +23,7 @@ export function useRepoSearch(params: { q: Readonly<Ref<string>>; sort: Readonly
   const searchKey = computed(() => JSON.stringify([params.q.value.trim(), sortField.value, sortDir.value]));
   const lastGood = shallowRef<LastGood | null>(null);
 
-  watch(query.data, (value) => {
+  watch(data, (value) => {
     if (value !== undefined) {
       lastGood.value = {
         searchKey: searchKey.value,
@@ -37,15 +37,11 @@ export function useRepoSearch(params: { q: Readonly<Ref<string>>; sort: Readonly
 
   const held = computed(() => (lastGood.value?.searchKey === searchKey.value ? lastGood.value : null));
 
-  const rows = computed(() => query.data.value?.items ?? held.value?.rows);
-  const totalCount = computed(() => query.data.value?.total_count ?? held.value?.totalCount);
-  const incompleteResults = computed(() => query.data.value?.incomplete_results ?? held.value?.incompleteResults ?? false);
-  const isStale = computed(() => query.data.value === undefined && held.value !== null);
+  const rows = computed(() => data.value?.items ?? held.value?.rows);
+  const totalCount = computed(() => data.value?.total_count ?? held.value?.totalCount);
+  const incompleteResults = computed(() => data.value?.incomplete_results ?? held.value?.incompleteResults ?? false);
+  const isStale = computed(() => data.value === undefined && held.value !== null);
   const lastGoodPage = computed(() => (isStale.value ? held.value?.page : undefined));
-
-  function refetch() {
-    query.refetch();
-  }
 
   return {
     rows,
@@ -53,9 +49,9 @@ export function useRepoSearch(params: { q: Readonly<Ref<string>>; sort: Readonly
     incompleteResults,
     isStale,
     lastGoodPage,
-    error: query.error,
-    isPending: query.isPending,
-    isFetching: query.isFetching,
+    error,
+    isPending,
+    isFetching,
     refetch,
   };
 }

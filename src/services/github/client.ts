@@ -1,3 +1,4 @@
+import axios, { CanceledError } from "axios";
 import type { ZodType } from "zod";
 
 import { useRateLimitStore, type RateLimitBucket } from "@/stores/rateLimit";
@@ -20,14 +21,17 @@ interface SearchRepositoriesParams {
   page: number;
 }
 
-const BASE_URL = "https://api.github.com";
-
 const REQUEST_TIMEOUT_MS = 10_000;
 
-const HEADERS: HeadersInit = {
-  Accept: "application/vnd.github+json",
-  "X-GitHub-Api-Version": "2022-11-28",
-};
+const http = axios.create({
+  baseURL: "https://api.github.com",
+  timeout: REQUEST_TIMEOUT_MS,
+  headers: {
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
+  },
+  validateStatus: () => true,
+});
 
 const SEGMENT_PATTERN = /^[\w.-]+$/;
 
@@ -43,40 +47,38 @@ function bucketFrom(resource: string | null, fallback: RateLimitBucket): RateLim
   return fallback;
 }
 
-async function request<T>(url: string, endpointBucket: RateLimitBucket, schema: ZodType<T>, signal?: AbortSignal): Promise<T> {
+type QueryParams = Record<string, string | number>;
+
+async function request<T>(url: string, endpointBucket: RateLimitBucket, schema: ZodType<T>, signal?: AbortSignal, params?: QueryParams): Promise<T> {
   const rateLimit = useRateLimitStore();
 
-  const combined = AbortSignal.any([...(signal ? [signal] : []), AbortSignal.timeout(REQUEST_TIMEOUT_MS)]);
-
-  let response: Response;
+  let status: number;
+  let body: unknown;
+  const headers = new Headers();
 
   try {
-    response = await fetch(url, { headers: HEADERS, signal: combined });
-  } catch {
-    if (signal?.aborted) {
+    const res = await http.get(url, { signal, params });
+
+    status = res.status;
+    body = res.data;
+
+    Object.entries(res.headers).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        headers.set(key, value);
+      }
+    });
+  } catch (error) {
+    if (signal?.aborted || error instanceof CanceledError) {
       throw { type: "aborted" } satisfies GithubError;
     }
 
     throw { type: "network" } satisfies GithubError;
   }
 
-  const bucket = bucketFrom(response.headers.get("x-ratelimit-resource"), endpointBucket);
+  const response = new Response(null, { status, headers });
+  const bucket = bucketFrom(headers.get("x-ratelimit-resource"), endpointBucket);
 
-  rateLimit.recordHeaders(bucket, response.headers, response.ok);
-
-  let body: unknown;
-
-  try {
-    body = await response.json();
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      body = undefined;
-    } else if (signal?.aborted) {
-      throw { type: "aborted" } satisfies GithubError;
-    } else {
-      throw { type: "network" } satisfies GithubError;
-    }
-  }
+  rateLimit.recordHeaders(bucket, headers, response.ok);
 
   if (!response.ok) {
     const error = mapResponseToError(response, bucket, body);
@@ -102,14 +104,14 @@ async function request<T>(url: string, endpointBucket: RateLimitBucket, schema: 
 }
 
 export async function searchRepositories(params: SearchRepositoriesParams, signal?: AbortSignal): Promise<GithubRepoSearchResponse> {
-  const search = new URLSearchParams({ q: params.q, page: String(params.page), per_page: String(SEARCH_PER_PAGE) });
+  const query: QueryParams = { q: params.q, page: params.page, per_page: SEARCH_PER_PAGE };
 
   if (params.sort !== null) {
-    search.set("sort", params.sort.field);
-    search.set("order", params.sort.dir);
+    query.sort = params.sort.field;
+    query.order = params.sort.dir;
   }
 
-  return request(`${BASE_URL}/search/repositories?${search.toString()}`, "search", RepoSearchResponseSchema, signal);
+  return request("/search/repositories", "search", RepoSearchResponseSchema, signal, query);
 }
 
 export async function getRepo(owner: string, name: string, signal?: AbortSignal): Promise<GithubRepo> {
@@ -117,7 +119,7 @@ export async function getRepo(owner: string, name: string, signal?: AbortSignal)
     throw { type: "not-found" } satisfies GithubError;
   }
 
-  const url = `${BASE_URL}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
+  const url = `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
 
   return request(url, "core", RepoSchema, signal);
 }
