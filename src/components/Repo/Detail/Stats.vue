@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GithubRepo } from "@/services/github/schemas";
+import type { GithubRepo } from "@/services/github/types";
 import { formatExactCount } from "@/utils/formatCount";
 
 defineOptions({ name: "RepoDetailStats" });

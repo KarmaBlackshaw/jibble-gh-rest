@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GithubRepo } from "@/services/github/schemas";
+import type { GithubRepo } from "@/services/github/types";
 import { formatCount } from "@/utils/formatCount";
 import { pluralize } from "@/utils/pluralize";
 

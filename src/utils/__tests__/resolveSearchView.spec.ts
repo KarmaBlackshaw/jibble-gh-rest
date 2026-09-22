@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { resolveSearchView, type SearchView } from "@/utils/resolveSearchView";
 import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo } from "@/services/github/schemas";
+import type { GithubRepo } from "@/services/github/types";
 
 const rows: GithubRepo[] = [];
 

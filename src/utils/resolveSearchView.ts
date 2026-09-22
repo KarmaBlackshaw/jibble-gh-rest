@@ -1,5 +1,5 @@
 import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo } from "@/services/github/schemas";
+import type { GithubRepo } from "@/services/github/types";
 
 export type SearchView =
   | { kind: "idle" }

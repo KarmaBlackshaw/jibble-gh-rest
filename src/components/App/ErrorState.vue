@@ -31,13 +31,6 @@ function describeError(error: GithubError): ErrorContent {
       return { title: "Something went wrong on GitHub's side", detail: "", action: "retry", icon: "error" };
     case "network":
       return { title: "Couldn't reach GitHub", detail: "Check your connection.", action: "retry", icon: "warning" };
-    case "malformed":
-      return {
-        title: "GitHub sent something unexpected",
-        detail: "The response didn't match what this app knows how to read.",
-        action: "retry",
-        icon: "error",
-      };
     case "unknown":
     case "aborted":
       return { title: "Something went wrong", detail: "", action: "retry", icon: "error" };

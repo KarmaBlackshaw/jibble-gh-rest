@@ -1,5 +1,5 @@
 import type { RateLimitBucket } from "@/stores/rateLimit";
-import { GithubErrorBodySchema } from "@/services/github/schemas";
+import type { GithubErrorBody } from "@/services/github/types";
 
 export type GithubError =
   | { type: "network" }
@@ -10,16 +10,25 @@ export type GithubError =
   | { type: "rate-limited"; bucket: RateLimitBucket; resetAt: number }
   | { type: "secondary-rate-limited"; retryAfterSeconds: number }
   | { type: "server"; status: number }
-  | { type: "malformed" }
   | { type: "unknown"; status: number };
 
 const INVALID_QUERY_FALLBACK = "GitHub could not process that search.";
 const SECONDARY_LIMIT_PATTERN = /rate limit|secondary|abuse/i;
 
-function parseBody(body: unknown) {
-  const result = GithubErrorBodySchema.safeParse(body);
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
 
-  return result.success ? result.data : null;
+function parseBody(body: unknown): GithubErrorBody | null {
+  if (!isRecord(body) || typeof body.message !== "string") {
+    return null;
+  }
+
+  const errors = Array.isArray(body.errors)
+    ? body.errors.flatMap((entry) => (isRecord(entry) && typeof entry.message === "string" ? [{ message: entry.message }] : []))
+    : undefined;
+
+  return { message: body.message, errors };
 }
 
 function invalidQueryMessage(body: unknown): string {

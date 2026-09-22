@@ -3,7 +3,7 @@ import type { Ref } from "vue";
 
 import { getRepo } from "@/services/github/client";
 import type { GithubError } from "@/services/github/errors";
-import type { GithubRepo } from "@/services/github/schemas";
+import type { GithubRepo } from "@/services/github/types";
 import { useRateLimitStore } from "@/stores/rateLimit";
 
 export function useRepo(params: { owner: Ref<string>; name: Ref<string> }): {
