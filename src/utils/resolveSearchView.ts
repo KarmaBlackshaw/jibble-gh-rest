@@ -5,6 +5,7 @@ export type SearchView =
   | { kind: "idle" }
   | { kind: "loading" }
   | { kind: "empty" }
+  | { kind: "blocked" }
   | { kind: "results"; stale: boolean; inlineError: GithubError | null }
   | { kind: "error"; error: GithubError };
 
@@ -14,6 +15,7 @@ export function resolveSearchView(input: {
   totalCount: number | undefined;
   isStale: boolean;
   error: GithubError | null;
+  isBlocked: boolean;
 }): SearchView {
   if (input.q.trim() === "") {
     return { kind: "idle" };
@@ -25,6 +27,10 @@ export function resolveSearchView(input: {
     }
 
     return { kind: "results", stale: input.isStale, inlineError: input.error };
+  }
+
+  if (input.isBlocked) {
+    return { kind: "blocked" };
   }
 
   if (input.error !== null) {

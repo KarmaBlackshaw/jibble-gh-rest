@@ -21,6 +21,10 @@ const resultsHeading = ref<HTMLElement | null>(null);
 const announcement = ref("");
 const focusPending = ref(false);
 
+const isSearchBlocked = computed(() => rateLimit.isBlocked("search"));
+const limitError = computed(() => search.error.value?.type === "rate-limited" || search.error.value?.type === "secondary-rate-limited");
+const blocked = computed(() => isSearchBlocked.value || limitError.value);
+
 const view = computed(() =>
   resolveSearchView({
     q: params.q.value,
@@ -28,6 +32,7 @@ const view = computed(() =>
     totalCount: search.totalCount.value,
     isStale: search.isStale.value,
     error: search.error.value,
+    isBlocked: blocked.value,
   })
 );
 
@@ -58,7 +63,15 @@ const statusHeading = computed(() => {
     return "Search failed";
   }
 
+  if (current.kind === "blocked") {
+    return "Search paused";
+  }
+
   if (current.stale) {
+    if (isSearchBlocked.value) {
+      return `Page ${page} will load when the limit resets. Showing page ${search.lastGoodPage.value ?? page}.`;
+    }
+
     if (current.inlineError !== null) {
       return `Couldn't load page ${page}. Showing page ${search.lastGoodPage.value ?? page}.`;
     }
@@ -123,13 +136,21 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
     <h1 tabindex="-1">GitHub Repo Explorer</h1>
 
     <section class="search-page__search">
-      <RepoSearchForm :q="params.q.value" :sort="params.sort.value" :loading="search.isFetching.value" @submit="onSubmit" />
+      <RepoSearchForm :q="params.q.value" :sort="params.sort.value" :loading="search.isFetching.value" :disabled="isSearchBlocked" @submit="onSubmit" />
     </section>
+
+    <RateLimitBanner bucket="search" />
 
     <section class="search-page__results" data-region="results">
       <h2 :id="resultsId" ref="resultsHeading" tabindex="-1">{{ statusHeading }}</h2>
 
-      <AppErrorState v-if="view.kind === 'results' && view.inlineError" :error="view.inlineError" variant="inline" :banner-visible="false" @retry="retry" />
+      <AppErrorState
+        v-if="view.kind === 'results' && view.inlineError"
+        :error="view.inlineError"
+        variant="inline"
+        :banner-visible="isSearchBlocked"
+        @retry="retry"
+      />
       <AppAlert
         v-else-if="view.kind === 'results' && search.incompleteResults.value"
         type="info"
@@ -143,7 +164,8 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
         :stale="view.kind === 'results' && view.stale"
       />
       <AppEmptyState v-else-if="view.kind === 'empty'" :query="params.q.value" />
-      <AppErrorState v-else-if="view.kind === 'error'" :error="view.error" variant="page" :banner-visible="false" @retry="retry" />
+      <p v-else-if="view.kind === 'blocked'" class="search-page__blocked">Results for “{{ params.q.value }}” will load automatically when the limit resets.</p>
+      <AppErrorState v-else-if="view.kind === 'error'" :error="view.error" variant="page" :banner-visible="isSearchBlocked" @retry="retry" />
 
       <RepoPagination
         v-if="view.kind === 'results'"
@@ -185,5 +207,10 @@ useTitle(computed(() => (params.q.value ? `${params.q.value} · GitHub Repo Expl
   flex-direction: column;
   gap: var(--space-2);
   font-family: var(--font-mono);
+}
+
+.search-page__blocked {
+  margin: 0;
+  color: var(--text-muted);
 }
 </style>

@@ -13,7 +13,11 @@ const rateLimit = useRateLimitStore();
 
 const { data, error, canonicalPath, refetch } = useRepo({ owner, name });
 
-const view = computed(() => resolveDetailView({ data: data.value, error: error.value }));
+const isCoreBlocked = computed(() => rateLimit.isBlocked("core"));
+const limitError = computed(() => error.value?.type === "rate-limited" || error.value?.type === "secondary-rate-limited");
+const blocked = computed(() => isCoreBlocked.value || limitError.value);
+
+const view = computed(() => resolveDetailView({ data: data.value, error: error.value, isBlocked: blocked.value }));
 
 const heading = computed(() => {
   if (view.value.kind === "ready") {
@@ -49,6 +53,8 @@ function retry() {
   <main class="repo-detail">
     <RouterLink :to="backTo"><span aria-hidden="true">← </span>Back to search</RouterLink>
 
+    <RateLimitBanner bucket="core" />
+
     <section data-region="repo" class="repo-detail__region">
       <h1 tabindex="-1" :class="{ 'repo-detail__heading--mono': view.kind !== 'error' }">{{ heading }}</h1>
 
@@ -62,8 +68,13 @@ function retry() {
         <RepoDetailMeta :repo="view.repo" />
       </template>
 
+      <template v-else-if="view.kind === 'blocked'">
+        <p class="repo-detail__blocked">This repository will load automatically when the limit resets.</p>
+        <AppButton tag="router-link" :to="backTo">Back to search</AppButton>
+      </template>
+
       <div v-else role="alert">
-        <AppErrorState :error="view.error" variant="page" :banner-visible="false" @retry="retry" />
+        <AppErrorState :error="view.error" variant="page" :banner-visible="isCoreBlocked" @retry="retry" />
       </div>
     </section>
   </main>
@@ -91,5 +102,10 @@ h1 {
 
 .repo-detail__heading--mono {
   font-family: var(--font-mono);
+}
+
+.repo-detail__blocked {
+  margin: 0;
+  color: var(--text-muted);
 }
 </style>

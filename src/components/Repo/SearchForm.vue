@@ -13,7 +13,6 @@ const {
   sort: RepoSearchSort | null;
   loading: boolean;
   disabled?: boolean;
-  disabledReasonId?: string;
 }>();
 
 const emit = defineEmits<{ submit: [payload: { q: string; sort: RepoSearchSort | null }] }>();
@@ -49,6 +48,10 @@ watch(
 );
 
 function onSubmit() {
+  if (loading || !draftQ.value.trim()) {
+    return;
+  }
+
   const sort = draftField.value === "best-match" ? null : { field: draftField.value, dir: draftDir.value };
 
   emit("submit", {
@@ -56,12 +59,6 @@ function onSubmit() {
     sort,
   });
 }
-
-watch([draftField, draftDir], () => {
-  if (draftQ.value.trim()) {
-    onSubmit();
-  }
-});
 </script>
 
 <template>

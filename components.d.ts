@@ -28,6 +28,7 @@ declare module 'vue' {
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElSkeletonItem: typeof import('element-plus/es')['ElSkeletonItem']
     ElTag: typeof import('element-plus/es')['ElTag']
+    RateLimitBanner: typeof import('./src/components/RateLimit/Banner.vue')['default']
     RepoCard: typeof import('./src/components/Repo/Card.vue')['default']
     RepoDetailHeader: typeof import('./src/components/Repo/Detail/Header.vue')['default']
     RepoDetailMeta: typeof import('./src/components/Repo/Detail/Meta.vue')['default']
